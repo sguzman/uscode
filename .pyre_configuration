@@ -1,0 +1,10 @@
+{
+  "source_directories": [
+    "."
+  ],
+  "taint_models_path": "/usr/lib",
+  "exclude": [
+    ".*/virt/.*",
+    ".*/download/.*"
+  ]
+}
