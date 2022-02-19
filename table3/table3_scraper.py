@@ -53,7 +53,7 @@ def subscraper(content): #function to parse Table 3 website
 			for m_element in d_element.xpath('a'):
 				addy = m_element.attrib['href']
 				url = "http://uscode.house.gov/table3/" + addy
-				print addy
+				print(addy)
 				#print text, url
 				#releases += [(text, url)]
 				subsubreleases.append( add_subsubrelease(url) )

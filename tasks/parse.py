@@ -22,7 +22,7 @@ def run(options):
   count = 0
   for section in sections:
     section_number = section.enum()
-    print "[%s USC %s] Parsing..." % (title_number, section_number)
+    print("[%s USC %s] Parsing..." % (title_number, section_number))
 
     # this could probably be black boxed a little further?
     bb = section.body_lines()

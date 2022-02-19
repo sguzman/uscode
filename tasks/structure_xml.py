@@ -64,7 +64,7 @@ def run(options):
   
   # Write output in JSON to stdout.
   if debug:
-    print "\n(dry run only, not outputting)"
+    print("\n(dry run only, not outputting)")
   else:
     json.dump(TOC, sys.stdout, indent=2, sort_keys=True, check_circular=False)
   

@@ -251,11 +251,11 @@ if __name__ == "__main__":
     from StringIO import StringIO
 
     # Download some GPO Locator data to play with, Title 8 of th US Code.
-    print 'Get comfy...this takes a sec...'
+    print('Get comfy...this takes a sec...')
     resp = urllib2.urlopen('http://uscode.house.gov/zip/2010/usc08.zip')
     data = StringIO(resp.read())
     fp = zipfile.ZipFile(data).open('usc08.10')
 
     for line in getlines(fp):
-        print line
+        print(line)
         raw_input('Press enter to see next line: ')

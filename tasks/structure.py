@@ -227,10 +227,12 @@ def download_usc(year, options):
   dest_dir = "data/uscode.house.gov/xhtml/%s" % year
 
   if os.path.isdir(dest_dir) and not options.get("force", False):
-    if debug: print "Cached, not downloading again"
-    return # assume it's downloaded
+      if debug:
+          print("Cached, not downloading again")
+      return # assume it's downloaded
 
-  if debug: print "Downloading US Code XHTML for %s" % year
+  if debug:
+      print("Downloading US Code XHTML for %s" % year)
   utils.mkdir_p(dest_dir)
   os.system("rm %s/*" % dest_dir)
   os.system("wget -q -m -l1 -P %s http://uscode.house.gov/xhtml/%s" % ("data", year))
