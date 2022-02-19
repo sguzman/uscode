@@ -11,7 +11,7 @@ Tables
 Title Summary
 
 - chapter-title concordance
- I93 "\u2003" - beginning of table
+ I93 "\\u2003" - beginning of table
  I70 - left column heading
  I29 - right column heading
  I07 - left column value

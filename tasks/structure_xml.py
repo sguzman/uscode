@@ -9,14 +9,14 @@
 #   debug: Output debug messages only, and no JSON output (dry run)
 #   force: Force a re-download of the US Code
 
-import glob, re, lxml.etree, lxml.html, json, sys, os, os.path, urllib, zipfile
+import glob, re, lxml.etree, lxml.html, json, sys, os, os.path, urllib.request, urllib.parse, urllib.error, zipfile
 
 import utils
 
-import HTMLParser
-pars = HTMLParser.HTMLParser()
+import html.parser
+pars = html.parser.HTMLParser()
 
-section_symbol = u'\xa7'
+section_symbol = '\xa7'
 
 ns = {
   "uslm": "http://xml.house.gov/schemas/uslm/1.0"
@@ -64,7 +64,7 @@ def run(options):
   
   # Write output in JSON to stdout.
   if debug:
-    print "\n(dry run only, not outputting)"
+    print("\n(dry run only, not outputting)")
   else:
     json.dump(TOC, sys.stdout, indent=2, sort_keys=True, check_circular=False)
   
@@ -74,8 +74,8 @@ def proc_node(node, parent, path, sections_only):
   remove_footnotes(node.xpath("uslm:heading", namespaces=ns)[0])
   entry = {
     "level": lxml.etree.QName(node.tag).localname,
-    "number": unicode(node.xpath("string(uslm:num/@value)", namespaces=ns)),
-    "name": unicode(node.xpath("string(uslm:heading)", namespaces=ns)),
+    "number": str(node.xpath("string(uslm:num/@value)", namespaces=ns)),
+    "name": str(node.xpath("string(uslm:heading)", namespaces=ns)),
   }
   if entry["level"] == "level": entry["level"] = "heading"
   
@@ -86,13 +86,13 @@ def proc_node(node, parent, path, sections_only):
   #if u"\u00a7\u202f" in entry["number"]: return # the HTML converter misses these
   
   # Misformatting
-  entry["number"] = entry["number"].replace(u"\u00a7\u202f", "") # section symbol plus narrow no-break space
+  entry["number"] = entry["number"].replace("\u00a7\u202f", "") # section symbol plus narrow no-break space
 
   # Text reformatting.
   entry["name"] = entry["name"].strip() # TODO: Flag upstream, remove this line when fixed.
   entry["number"] = entry["number"].strip() # TODO: Flag upstream, remove this line when fixed.
-  entry["name"] = entry["name"].replace(u"\u00ad", "") # remove soft hyphens
-  entry["number"] = entry["number"].replace(u"\u2013", "-") # replace en-dashes with simple hyphens
+  entry["name"] = entry["name"].replace("\u00ad", "") # remove soft hyphens
+  entry["number"] = entry["number"].replace("\u2013", "-") # replace en-dashes with simple hyphens
   if entry["number"] == "": entry["number"] = None
   
   # Don't record structure of phantom parts.
@@ -158,7 +158,7 @@ def remove_footnotes(node):
   # lxml makes removing nodes tricky because the tail text gets removed too, but it needs to be moved.
   def filter_nbsp(t):
     if not t: return ""
-    if t[-1] in (u"\u00a0", u"\u202f"): t = t[:-1] # footnotes are often preceded by a non-breaking space which we can remove
+    if t[-1] in ("\u00a0", "\u202f"): t = t[:-1] # footnotes are often preceded by a non-breaking space which we can remove
     return t
   for n in node.xpath("uslm:note|uslm:ref[@class='footnoteRef']", namespaces=ns):
     if n.tail:
@@ -175,7 +175,7 @@ def download_usc(options):
   utils.mkdir_p(dest_dir)
   
   base_url = "http://uscode.house.gov/download/"
-  index_page = lxml.html.parse(urllib.urlopen(base_url + "download.shtml")).getroot()
+  index_page = lxml.html.parse(urllib.request.urlopen(base_url + "download.shtml")).getroot()
   for anode in index_page.xpath('//a[.="[XML]"]'):
     if "uscAll@" in anode.get("href"): continue # skip the all-titles archive
     if "xml_usc34@" in anode.get("href"): continue # title 34 doesn't exist (was repealed)

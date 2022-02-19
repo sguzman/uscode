@@ -51,9 +51,7 @@ def jsonval(*funcs):
     return decorator
 
 
-class Base(object):
-
-    __metaclass__ = Registry
+class Base(object, metaclass=Registry):
 
     class meta:
         abstract = True
@@ -259,7 +257,7 @@ class Section(Base):
             else:
                 enum_text, body = re.split(r'\s+', text, 1)
                 enums = re.findall(r'\((\S+?)\)', enum_text)
-                enums = map(Enum, enums)
+                enums = list(map(Enum, enums))
                 for enum in enums[1:]:
                     enum._was_nested = True
 
@@ -279,9 +277,9 @@ class Section(Base):
         ignored = '''Amendments, Derivation, References In Text,
                      Codification'''
         ignored = re.split(r'[,\s+]+', ignored)
-        print set(self.data.docs) - set(ignored)
+        print(set(self.data.docs) - set(ignored))
         for k in set(self.data.docs) - set(ignored):
-            if isinstance(k, basestring):
+            if isinstance(k, str):
                 yield k, list(_subdoc_generator(k)(self))
 
     def as_tree(self):

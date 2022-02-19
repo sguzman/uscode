@@ -1,5 +1,5 @@
 import os, errno, sys, traceback
-import re, htmlentitydefs
+import re, html.entities
 import pprint
 
 from pytz import timezone
@@ -9,7 +9,7 @@ import datetime, time
 # scraper should be instantiated at class-load time, so that it can rate limit appropriately
 
 import scrapelib
-scraper = scrapelib.Scraper(requests_per_minute=120, follow_robots=False, retry_attempts=3)
+scraper = scrapelib.Scraper(requests_per_minute=120, retry_attempts=3)
 
 
 # manage input and output dirs
@@ -29,7 +29,7 @@ def title_filename(title, year=2011):
 
 def log(object):
   if isinstance(object, str):
-    print object
+    print(object)
   else:
     pprint.pprint(object)
 
@@ -87,7 +87,7 @@ def mkdir_p(path):
 def unescape(text):
 
   def remove_unicode_control(str):
-    remove_re = re.compile(u'[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]')
+    remove_re = re.compile('[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]')
     return remove_re.sub('', str)
 
   def fixup(m):
@@ -96,15 +96,15 @@ def unescape(text):
       # character reference
       try:
         if text[:3] == "&#x":
-          return unichr(int(text[3:-1], 16))
+          return chr(int(text[3:-1], 16))
         else:
-          return unichr(int(text[2:-1]))
+          return chr(int(text[2:-1]))
       except ValueError:
         pass
     else:
       # named entity
       try:
-        text = unichr(htmlentitydefs.name2codepoint[text[1:-1]])
+        text = chr(html.entities.name2codepoint[text[1:-1]])
       except KeyError:
         pass
     return text # leave as is

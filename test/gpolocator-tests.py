@@ -20,16 +20,16 @@ def main():
     import pdb;pdb.set_trace()
     schemes.Token('ll').get_schemes()
 
-    for k, v in schemes._schemes_lists.items():
-        print v
+    for k, v in list(schemes._schemes_lists.items()):
+        print(v)
         for t in v:
             en = schemes.Enum(t)
-            print en
+            print(en)
             try:
-                print en.get_schemes()
-                print en.get_ordinality()
+                print(en.get_schemes())
+                print(en.get_ordinality())
             except Exception as e:
-                print 'got', e
+                print('got', e)
                 import pdb;pdb.set_trace()
                 en.get_ordinality()
             # print en.get_schemes()

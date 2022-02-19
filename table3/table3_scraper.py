@@ -2,7 +2,7 @@
 import os, sys 
 import httplib2
 from lxml import etree
-from StringIO import StringIO
+from io import StringIO
 import re
 import simplejson
 
@@ -27,7 +27,7 @@ def mainscraper(content): #function to parse Table 3 website
 	for element in doc.xpath('//div[@class="alltable3years"]'):   #Could also use "alltable3statutesatlargevolumes"
 		for d_element in element.xpath('span'):
 			text = d_element.xpath('a')[0].text
-			unitext = unicode(text).encode(sys.stdout.encoding, 'replace')
+			unitext = str(text).encode(sys.stdout.encoding, 'replace')
 			for m_element in d_element.xpath('a'):
 				addy = m_element.attrib['href']
 				year = addy.replace( 'year', '' )
@@ -49,11 +49,11 @@ def subscraper(content): #function to parse Table 3 website
 	for element in doc.xpath('//div[@class="yearmaster"]'):   #Could also use "statutesatlargevolumemasterhead"
 		for d_element in element.xpath('span'):
 			text = d_element.xpath('a')[0].text
-			unitext = unicode(text).encode(sys.stdout.encoding, 'replace')
+			unitext = str(text).encode(sys.stdout.encoding, 'replace')
 			for m_element in d_element.xpath('a'):
 				addy = m_element.attrib['href']
 				url = "http://uscode.house.gov/table3/" + addy
-				print addy
+				print(addy)
 				#print text, url
 				#releases += [(text, url)]
 				subsubreleases.append( add_subsubrelease(url) )

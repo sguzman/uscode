@@ -81,7 +81,7 @@ from functools import partial
 from collections import namedtuple
 
 
-class GPOLocatorText(unicode):
+class GPOLocatorText(str):
     pass
 
 
@@ -104,7 +104,7 @@ class GPOLocatorLine(namedtuple('GPOLocatorLine', 'code arg data')):
             yield matchobj.group(1), matchobj.start()
 
     def footnotes(self):
-        return map(self._footnote_dict.get, self._footnote_numbers)
+        return list(map(self._footnote_dict.get, self._footnote_numbers))
 
     @property
     def text(self):
@@ -151,7 +151,7 @@ codes = {
 re_code = re.compile('|'.join(sorted(codes, reverse=True, key=len)))
 
 # Compile functions to match code arguments.
-for k, v in codes.items():
+for k, v in list(codes.items()):
     if v:
         codes[k] = re.compile(v).match
 
@@ -161,47 +161,47 @@ for k, v in codes.items():
 specialchars = {
     # These are the unicode equivalents of the GPOLocator
     # escape sequences.
-    '\x06': u'§',
-    '\x0A': u'\n',
-    '\x0B': u'¢',
-    '\x0C': u'¶',
-    '\x10': u"'",
-    '\x13': u'[',
-    '\x14': u']',
-    '\x18': u'\u2003',
-    '\x19': u'\u2002',
-    '\x1B': u'±',
-    '\x1C': u'',
-    '\x1E': u'†',
-    '\x27': u'“',
-    '\x3C': u'<',
-    '\x3E': u'>',
-    '\x5E': u'-',
-    '\x5F': u'–',
-    '\x60': u'”',
-    '\xAB': u'º',
-    '\xBD': u'‡',
-    '\xBE': u'n',
-    '\xBF': u'□',
-    '\xff1A': u' ',
-    '\xff09': u'–',
-    '\xff0A': u'×',
-    '\xff08': u'\u2009',
-    '\xffAF': u'©',
-    '\xffAE0': u'˘',
-    '\xffAE1': u'΄',
-    '\xffAE2': u'`',
-    '\xffAE3': u'^',
-    '\xffAE4': u'¨',
-    '\xffAE5': u'ˇ',
-    '\xffAE6': u'~',
-    '\xffAE7': u'˚',
-    '\xffAE8': u'ˉ',
-    '\xffAE9': u'¸',
+    '\x06': '§',
+    '\x0A': '\n',
+    '\x0B': '¢',
+    '\x0C': '¶',
+    '\x10': "'",
+    '\x13': '[',
+    '\x14': ']',
+    '\x18': '\u2003',
+    '\x19': '\u2002',
+    '\x1B': '±',
+    '\x1C': '',
+    '\x1E': '†',
+    '\x27': '“',
+    '\x3C': '<',
+    '\x3E': '>',
+    '\x5E': '-',
+    '\x5F': '–',
+    '\x60': '”',
+    '\xAB': 'º',
+    '\xBD': '‡',
+    '\xBE': 'n',
+    '\xBF': '□',
+    '\xff1A': ' ',
+    '\xff09': '–',
+    '\xff0A': '×',
+    '\xff08': '\u2009',
+    '\xffAF': '©',
+    '\xffAE0': '˘',
+    '\xffAE1': '΄',
+    '\xffAE2': '`',
+    '\xffAE3': '^',
+    '\xffAE4': '¨',
+    '\xffAE5': 'ˇ',
+    '\xffAE6': '~',
+    '\xffAE7': '˚',
+    '\xffAE8': 'ˉ',
+    '\xffAE9': '¸',
     }
 
 # Compile the keys into a big regex.
-_ = map(re.escape, specialchars)
+_ = list(map(re.escape, specialchars))
 _ = '|'.join(sorted(_, key=len, reverse=True))
 _ = re.compile('(%s)' % _)
 
@@ -246,16 +246,16 @@ def getlines(fp, argmatchers=codes, codematcher=re_code.match, swap=swap,
 
 if __name__ == "__main__":
 
-    import urllib2
+    import urllib.request, urllib.error, urllib.parse
     import zipfile
-    from StringIO import StringIO
+    from io import StringIO
 
     # Download some GPO Locator data to play with, Title 8 of th US Code.
-    print 'Get comfy...this takes a sec...'
-    resp = urllib2.urlopen('http://uscode.house.gov/zip/2010/usc08.zip')
+    print('Get comfy...this takes a sec...')
+    resp = urllib.request.urlopen('http://uscode.house.gov/zip/2010/usc08.zip')
     data = StringIO(resp.read())
     fp = zipfile.ZipFile(data).open('usc08.10')
 
     for line in getlines(fp):
-        print line
-        raw_input('Press enter to see next line: ')
+        print(line)
+        input('Press enter to see next line: ')

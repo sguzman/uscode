@@ -15,10 +15,11 @@ import glob, re, lxml.html, json, sys, os
 
 import utils
 
-import HTMLParser
-pars = HTMLParser.HTMLParser()
+import html
+import html.parser
+pars = html.parser.HTMLParser()
 
-section_symbol = u'\xa7'
+section_symbol = '\xa7'
 
 
 def run(options):
@@ -69,7 +70,7 @@ def run(options):
     # extract title, to have on hand when parsing sections, and debug output
     title = match.groups(1)[0]
     if debug:
-      print "[%s] Processing title..." % title
+      print("[%s] Processing title..." % title)
 
     # Parse the XHTML file...
     dom = lxml.html.parse(fn)
@@ -79,7 +80,7 @@ def run(options):
     for n in dom.find("body/div"):
       # Look for comments of the form <!-- expcite:... -->
       # This tells us the current table of contents location for the following <h3>.
-      m = re.match(ur"<!-- expcite:(.*\S)\s*-->", unicode(n))
+      m = re.match(r"<!-- expcite:(.*\S)\s*-->", str(n))
       if m:
         # This is a "!@!"-separated string giving the table-of-contents
         # path to each section as we see it.
@@ -87,7 +88,7 @@ def run(options):
         
         # These comments have HTML entities. Replace them with unicode.
         expcite = expcite.replace("&nbsp;", " ")
-        expcite = pars.unescape(expcite)
+        expcite = html.unescape(expcite)
         
         # Parse the table of contents path.
         path = parse_expcite(expcite)
@@ -114,7 +115,7 @@ def run(options):
 
   # Write output in JSON to stdout.
   if debug:
-    print "\n(dry run only, not outputting)"
+    print("\n(dry run only, not outputting)")
   else:
     json.dump(TOC, sys.stdout, indent=2, sort_keys=True, check_circular=False)
   
@@ -122,7 +123,7 @@ def parse_expcite(expcite):
   path = expcite.split("!@!")
   
   # Parse each part of the path:
-  for i in xrange(len(path)):
+  for i in range(len(path)):
     if re.match(r"\[.*-(REPEALED|RESERVED|OMITTED|TRANSFERRED)\]\s*$", path[i], re.I):
       # This part is repealed. No need to process this path at all.
       path = None
@@ -140,7 +141,7 @@ def parse_expcite(expcite):
       # Store as (TITLE|CHAPTER, NUMBER, NAME)
       # Replace en-dashes in the number with simple dashes, as we do with section numbers.
       
-      path[i] = (m.group(1).lower(), m.group(2).replace(u"\u2013", "-"), m.group(3))
+      path[i] = (m.group(1).lower(), m.group(2).replace("\u2013", "-"), m.group(3))
       
       # Reformat title appendices: XXX, APPENDIX => XXXa.
       if i == 0 and path[i][0] == "title" and ", APPENDIX" in path[i][1]:
@@ -167,7 +168,7 @@ def parse_h3(path, h3, TOC, title, sections_only = False):
     return
     
   # Reformat section numbers. Replace en-dashes with simple dashes, as we do with chapter etc. numbers.
-  h3 = h3.replace(u"\u2013", "-")
+  h3 = h3.replace("\u2013", "-")
     
   # Parse the section number and description, and add that to the path.
   m = re.match(section_symbol + r"(.*?)\.? (.*)", h3)
@@ -227,10 +228,10 @@ def download_usc(year, options):
   dest_dir = "data/uscode.house.gov/xhtml/%s" % year
 
   if os.path.isdir(dest_dir) and not options.get("force", False):
-    if debug: print "Cached, not downloading again"
+    if debug: print("Cached, not downloading again")
     return # assume it's downloaded
 
-  if debug: print "Downloading US Code XHTML for %s" % year
+  if debug: print("Downloading US Code XHTML for %s" % year)
   utils.mkdir_p(dest_dir)
   os.system("rm %s/*" % dest_dir)
   os.system("wget -q -m -l1 -P %s http://uscode.house.gov/xhtml/%s" % ("data", year))

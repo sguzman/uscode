@@ -35,4 +35,4 @@ import utils
 try:
   __import__(task_name).run(options)
 except Exception as exception:
-  print utils.format_exception(exception)
+  print(utils.format_exception(exception))

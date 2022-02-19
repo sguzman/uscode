@@ -115,7 +115,7 @@ def run(options):
             try:
                 out = subprocess.check_output(cmd, shell=True)
             except subprocess.CalledProcessError as e:
-                print e
+                print(e)
     # subprocess.check_call('cd /home/thom/code && octogit create '
     #                       '11USC101 "11 USC 101 in git"', shell=True)
     # subprocess.check_call('cd %s && git push origin master' % path, shell=True)

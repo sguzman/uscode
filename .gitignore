@@ -4,3 +4,7 @@
 *.pyc
 *.json
 /todo*
+*.bak
+*.zip
+*.stderr
+*.htm
